@@ -18,14 +18,14 @@ export const NotesDataSlice = createSlice({
       state.notesData = action.payload;
     },
     addNotesData(state, action) {
-      storageLocal.set(
-        'Notes',
-        JSON.stringify([action.payload, ...state.notesData]),
-      );
       action.payload.date =
         new Date().toDateString().split(' ').splice(1, 3).join(' ') +
         '.' +
         new Date().toJSON().split('T')[1].split('.')[0];
+      storageLocal.set(
+        'Notes',
+        JSON.stringify([action.payload, ...state.notesData]),
+      );
       state.notesData = [action.payload, ...state.notesData];
     },
     deleteNotesData(state, action) {

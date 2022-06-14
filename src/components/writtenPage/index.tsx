@@ -1,5 +1,5 @@
-import React, {FC} from 'react';
-import {StyleSheet, Text, View, ViewStyle} from 'react-native';
+import React, {FC, useEffect, useState} from 'react';
+import {Alert, StyleSheet, View} from 'react-native';
 import {COLORS} from '../../constants/colors';
 import {dw} from '../../utils/dimensions';
 import {ViewContainer} from '../common/viewContainer';
@@ -7,86 +7,96 @@ import {IconContainer} from '../common/iconContainer';
 import {Input} from '../input';
 import {DONE_ICON} from '../../constants/images';
 import {useAppDispatch} from '../../hooks/redux';
-import {addNote} from '../../redux/store/actionCreator/actionCreator';
-import {useForm, Controller} from 'react-hook-form';
+import {
+  addNote,
+  deleteNote,
+} from '../../redux/store/actionCreator/actionCreator';
+import {useIsFocused} from '@react-navigation/native';
+import * as yup from 'yup';
 
-interface WrittenPageProps {
-  containerStyle?: ViewStyle;
-}
+let schema = yup.object().shape({
+  title: yup.string().min(3).max(15),
+  text: yup.string().min(3).max(500),
+});
 
-export const WrittenPage: FC<WrittenPageProps> = ({containerStyle}) => {
-  const {
-    control,
-    handleSubmit,
-    reset,
-    formState: {errors},
-  } = useForm({
-    defaultValues: {
-      title: '',
-      text: '',
-    },
-  });
+export const WrittenPage: FC = (props: any) => {
+  const isFocused = useIsFocused();
+
   const dispatch = useAppDispatch();
 
-  const onSubmit = async (data: any) => {
-    dispatch(addNote(data));
-    reset();
+  const [inputTitle, setinputTitle] = useState('');
+  const [inputText, setInputText] = useState('');
+
+  useEffect(() => {
+    if (props.route.params) {
+      setinputTitle(props.route.params.value.title);
+      setInputText(props.route.params.value.text);
+    }
+  }, [
+    props.route.params,
+    props.route.params.value.text,
+    props.route.params.value.title,
+  ]);
+
+  useEffect(() => {
+    if (!isFocused) {
+      setinputTitle('');
+      setInputText('');
+    }
+  }, [isFocused]);
+
+  const onSubmit = () => {
+    schema
+      .validate({title: inputTitle, text: inputText})
+      .then(() => {
+        dispatch(
+          addNote({
+            title: inputTitle,
+            text: inputText,
+            date: '',
+          }),
+        );
+        props.route.params.value.date !== undefined &&
+          dispatch(
+            deleteNote({
+              title: props.route.params.value.title,
+              text: props.route.params.value.text,
+              date: props.route.params.value.date,
+            }),
+          );
+      })
+      .then(() => props.navigation.navigate('Notes'))
+      .catch(err => {
+        Alert.alert(`${err}`);
+      });
   };
+
   return (
-    <View style={[styles.container, containerStyle && containerStyle]}>
+    <View
+      style={[
+        styles.container,
+        props.route.params && props.route.params.containerStyle,
+      ]}>
       <ViewContainer
         data={<IconContainer icon={DONE_ICON} imageStyle={styles.image} />}
-        onPress={handleSubmit(onSubmit)}
+        onPress={onSubmit}
       />
-      <Controller
-        control={control}
-        rules={{
-          maxLength: 15,
-          minLength: 3,
-          required: true,
-        }}
-        render={({field: {onChange, value}}) => (
-          <Input
-            text={value}
-            containerStyle={styles.containerTitle}
-            inputStyle={styles.inputTitle}
-            placeholder={'Title'}
-            maxLength={15}
-            onChangeText={onChange}
-          />
-        )}
-        name="title"
+      <Input
+        text={inputTitle}
+        containerStyle={styles.containerTitle}
+        inputStyle={styles.inputTitle}
+        placeholder={'Title'}
+        maxLength={15}
+        onChangeText={setinputTitle}
       />
-      {errors.title && (
-        <Text style={styles.text}>
-          Enter title correctly minimum Length 3, maximum 15
-        </Text>
-      )}
-
-      <Controller
-        control={control}
-        rules={{
-          maxLength: 500,
-          minLength: 3,
-          required: true,
-        }}
-        render={({field: {onChange, value}}) => (
-          <Input
-            text={value}
-            containerStyle={styles.containerMainText}
-            placeholder={'Type something...'}
-            inputStyle={styles.inputStyle}
-            maxLength={500}
-            onChangeText={onChange}
-          />
-        )}
-        name="text"
+      <Input
+        text={inputText}
+        containerStyle={styles.containerMainText}
+        placeholder={'Type something...'}
+        inputStyle={styles.inputStyle}
+        maxLength={500}
+        onChangeText={setInputText}
       />
-      {/* {errors.text && (
-        <Text style={styles.text}>
-          Enter text correctly minimum Length 3, maximum 150
-        </Text>
-      )} */}
     </View>
   );
 };

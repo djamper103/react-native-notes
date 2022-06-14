@@ -27,10 +27,13 @@ export const Home: FC<HomeProps> = props => {
 
   const dispatch = useAppDispatch();
 
-  const onPressModal = (type: string, dataItem: NotesListType) => {
-    console.log(type);
+  const onPressModal = (type?: string, value?: any) => {
     if (type === 'Delete') {
-      dispatch(deleteNote(dataItem));
+      dispatch(deleteNote(value));
+    } else {
+      props.navigation.navigate('New Note', {
+        value: value ? value : {text: '', title: ''},
+      });
     }
   };
   const uploadData = () => {};
@@ -40,9 +43,6 @@ export const Home: FC<HomeProps> = props => {
     ifJson('Notes', setNote, dispatch);
   }, [dispatch]);
 
-  const onPressCircle = () => {
-    props.navigation.navigate('New Note');
-  };
   const renderItem: any = ({item}: {item: any}) => {
     return (
       <HomeListItem
@@ -61,7 +61,7 @@ export const Home: FC<HomeProps> = props => {
         data={
           <TextContainer textHeaderStyle={styles.circleText} textHeader={'+'} />
         }
-        onPress={onPressCircle}
+        onPress={onPressModal}
       />
       <View>
         <FlatList<NotesListType>

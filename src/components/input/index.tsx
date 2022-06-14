@@ -26,7 +26,7 @@ interface InputProps {
   containerRightIcon?: ViewStyle;
   leftIconStyle?: any;
   rightIconStyle?: any;
-  onChangeText?: (value: string) => any;
+  onChangeText: (value: string) => any;
   onPressLeftIcon?: () => void;
   onPressRightIcon?: () => void;
 }

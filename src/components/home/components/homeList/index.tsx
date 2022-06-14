@@ -44,7 +44,7 @@ export const HomeListItem: FC<ListItemProps> = ({
       onPress={onPressItem}
       onLongPress={onLongPressItem}>
       <Text style={[styles.textDate, isTheme && styles.textActive]}>
-        {data.date && data.date.split('.')[0]}
+        {data.date && data.date?.split('.')[0]}
       </Text>
       <Text style={[styles.textTitle, isTheme && styles.textActive]}>
         {data?.title}
@@ -75,7 +75,7 @@ export const HomeListItem: FC<ListItemProps> = ({
 const styles = StyleSheet.create({
   container: {
     padding: dw(10),
-    backgroundColor: COLORS.MY_SIN,
+    backgroundColor: COLORS.GHOST,
     width: 190,
     marginBottom: dw(10),
     borderRadius: dw(10),

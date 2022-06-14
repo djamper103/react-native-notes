@@ -24,7 +24,7 @@ export const Header: FC<HeaderProps> = props => {
   };
 
   const onPressItem = (value: string) => {
-    props.navigation.navigate(value);
+    props.navigation.navigate(value, {value: {text: '', title: ''}});
   };
 
   return (
