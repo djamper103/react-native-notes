@@ -1,4 +1,4 @@
-import React, {FC, useEffect} from 'react';
+import React, {FC, useCallback, useEffect, useState} from 'react';
 import {FlatList, StyleSheet, View, ViewStyle} from 'react-native';
 import {COLORS} from '../../constants/colors';
 import {useAppDispatch, useAppSelector} from '../../hooks/redux';
@@ -22,10 +22,17 @@ interface HomeProps {
 }
 
 export const Home: FC<HomeProps> = props => {
+  const [state, setState] = useState<NotesListType[]>([]);
+  const [textSearch, setTextSearch] = useState('');
+
   const {notesData} = useAppSelector(reducer => reducer.notesDataReducer);
   const {isTheme} = useAppSelector(reducer => reducer.themeReducer);
 
   const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    ifJson('Notes', setNote, dispatch);
+  }, [dispatch]);
 
   const onPressModal = (type?: string, value?: any) => {
     if (type === 'Delete') {
@@ -36,12 +43,28 @@ export const Home: FC<HomeProps> = props => {
       });
     }
   };
-  const uploadData = () => {};
-  const onSearch = () => {};
+
+  const onSearch = useCallback(
+    (value: string) => {
+      if (value !== '') {
+        setTextSearch(value);
+        let filter = notesData.filter(el => el.title === value);
+        setState(filter);
+      } else {
+        setTextSearch('');
+        setState([]);
+      }
+    },
+    [notesData],
+  );
+
+  const uploadData = () => {
+    onSearch('');
+  };
 
   useEffect(() => {
-    ifJson('Notes', setNote, dispatch);
-  }, [dispatch]);
+    onSearch(textSearch);
+  }, [notesData, onSearch, textSearch]);
 
   const renderItem: any = ({item}: {item: any}) => {
     return (
@@ -65,7 +88,7 @@ export const Home: FC<HomeProps> = props => {
       />
       <View>
         <FlatList<NotesListType>
-          data={notesData}
+          data={state.length > 0 ? state : notesData}
           bounces={false}
           keyExtractor={item => item.date}
           renderItem={renderItem}
