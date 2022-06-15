@@ -37,10 +37,10 @@ export const NavigationContainerFC: FC = () => {
                 backgroundColor: isTheme ? COLORS.MIRAGE : COLORS.WHITE,
                 height: dw(60),
               },
-              headerTintColor: isTheme ? COLORS.WHITE : COLORS.SCORPION,
-              // cardStyle: {
-              //   backgroundColor: isTheme ? COLORS.MIRAGE : COLORS.WHITE,
-              // },
+              headerTintColor: isTheme ? COLORS.WHITE : COLORS.MIRAGE,
+              cardStyle: {
+                backgroundColor: isTheme ? COLORS.MIRAGE : COLORS.WHITE,
+              },
             }}
           />
         ))}

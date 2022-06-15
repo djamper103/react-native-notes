@@ -1,22 +1,30 @@
-import React, {FC} from 'react';
+import React, {FC, useState} from 'react';
 import {View, ViewStyle} from 'react-native';
 import {ModalListItem} from './modalListItem';
 
 interface HeaderProps {
   data: any;
   isModal?: boolean;
+  isData?: boolean;
   textStyle?: any;
-  containerStyle?: ViewStyle;
-  onPressContainer: () => void;
+  containerStyle?: any;
+  containerStyleItem?: ViewStyle;
   onPressItem: (value: string) => void;
 }
 
 export const ModalContent: FC<HeaderProps> = ({
   data,
+  isData,
   textStyle,
   containerStyle,
+  containerStyleItem,
   onPressItem,
 }) => {
+  const [isItem, setIsItem] = useState('white');
+  const handleItemPress = (item: any) => {
+    onPressItem(item);
+    setIsItem(item);
+  };
   return (
     <View style={containerStyle && containerStyle}>
       {data &&
@@ -24,9 +32,12 @@ export const ModalContent: FC<HeaderProps> = ({
           return (
             <ModalListItem
               data={el}
-              onPress={onPressItem}
               key={el}
+              isData={isData}
+              isItem={isItem}
               textStyle={textStyle}
+              containerStyle={containerStyleItem}
+              onPress={handleItemPress}
             />
           );
         })}

@@ -1,11 +1,8 @@
 import React, {FC, useEffect, useState} from 'react';
 import {Alert, StyleSheet, View} from 'react-native';
 import {COLORS} from '../../constants/colors';
-import {dw} from '../../utils/dimensions';
-import {ViewContainer} from '../common/viewContainer';
-import {IconContainer} from '../common/iconContainer';
+import {dh, dw} from '../../utils/dimensions';
 import {Input} from '../input';
-import {DONE_ICON} from '../../constants/images';
 import {useAppDispatch} from '../../hooks/redux';
 import {
   addNote,
@@ -13,10 +10,15 @@ import {
 } from '../../redux/store/actionCreator/actionCreator';
 import {useIsFocused} from '@react-navigation/native';
 import * as yup from 'yup';
+import {ScrollView} from 'react-native-gesture-handler';
+import {ModalContent} from '../common/modalContent';
+import {modalDataColor} from '../../constants/data';
+import {IconContainer} from '../common/iconContainer';
+import {DONE_ICON} from '../../constants/images';
 
 let schema = yup.object().shape({
   title: yup.string().min(3).max(15),
-  text: yup.string().min(3).max(500),
+  text: yup.string().min(3).max(1000),
 });
 
 export const WrittenPage: FC = (props: any) => {
@@ -24,12 +26,13 @@ export const WrittenPage: FC = (props: any) => {
 
   const dispatch = useAppDispatch();
 
-  const [inputTitle, setinputTitle] = useState('');
+  const [inputTitle, setInputTitle] = useState('');
   const [inputText, setInputText] = useState('');
+  const [color, setColor] = useState('white');
 
   useEffect(() => {
     if (props.route.params) {
-      setinputTitle(props.route.params.value.title);
+      setInputTitle(props.route.params.value.title);
       setInputText(props.route.params.value.text);
     }
   }, [
@@ -40,7 +43,7 @@ export const WrittenPage: FC = (props: any) => {
 
   useEffect(() => {
     if (!isFocused) {
-      setinputTitle('');
+      setInputTitle('');
       setInputText('');
     }
   }, [isFocused]);
@@ -54,6 +57,7 @@ export const WrittenPage: FC = (props: any) => {
             title: inputTitle,
             text: inputText,
             date: '',
+            color,
           }),
         );
         props.route.params.value.date !== undefined &&
@@ -62,6 +66,7 @@ export const WrittenPage: FC = (props: any) => {
               title: props.route.params.value.title,
               text: props.route.params.value.text,
               date: props.route.params.value.date,
+              color,
             }),
           );
       })
@@ -71,48 +76,122 @@ export const WrittenPage: FC = (props: any) => {
       });
   };
 
+  const onPressItem = (value: string) => {
+    setColor(value);
+  };
+
   return (
-    <View
-      style={[
-        styles.container,
-        props.route.params && props.route.params.containerStyle,
-      ]}>
-      <ViewContainer
-        data={<IconContainer icon={DONE_ICON} imageStyle={styles.image} />}
-        onPress={onSubmit}
-      />
-      <Input
-        text={inputTitle}
-        containerStyle={styles.containerTitle}
-        inputStyle={styles.inputTitle}
-        placeholder={'Title'}
-        maxLength={15}
-        onChangeText={setinputTitle}
-      />
-      <Input
-        text={inputText}
-        containerStyle={styles.containerMainText}
-        placeholder={'Type something...'}
-        inputStyle={styles.inputStyle}
-        maxLength={500}
-        onChangeText={setInputText}
-      />
-    </View>
+    <>
+      {modalDataColor && (
+        <View style={styles.containerModal}>
+          <ModalContent
+            data={modalDataColor}
+            isModal={false}
+            containerStyle={styles.containerModalStyle}
+            containerStyleItem={styles.containerStyleItem}
+            onPressItem={onPressItem}
+          />
+          <IconContainer
+            icon={DONE_ICON}
+            imageStyle={styles.image}
+            containerStyle={styles.onSubmit}
+            onPress={onSubmit}
+          />
+        </View>
+      )}
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        style={[
+          styles.container,
+          props.route.params && props.route.params.containerStyle,
+        ]}>
+        <Input
+          text={inputTitle}
+          containerStyle={[
+            styles.containerInput,
+            props.route.params.isTheme && styles.containerInputActive,
+          ]}
+          inputStyle={[
+            styles.inputTitle,
+            props.route.params.isTheme && styles.inputStyleActive,
+          ]}
+          placeholder={'Title'}
+          maxLength={15}
+          placeholderTextColor={
+            props.route.params.isTheme ? COLORS.WHITE : COLORS.MIRAGE
+          }
+          onChangeText={setInputTitle}
+        />
+        <Input
+          text={inputText}
+          containerStyle={[
+            styles.containerInput,
+            props.route.params.isTheme && styles.containerInputActive,
+          ]}
+          placeholder={'Type something...'}
+          inputStyle={[
+            styles.inputStyle,
+            props.route.params.isTheme && styles.inputStyleActive,
+          ]}
+          maxLength={1000}
+          placeholderTextColor={
+            props.route.params.isTheme ? COLORS.WHITE : COLORS.MIRAGE
+          }
+          onChangeText={setInputText}
+        />
+      </ScrollView>
+    </>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {},
-  containerTitle: {
+  container: {flexGrow: 1},
+  containerInput: {
     alignItems: 'flex-start',
   },
-  containerMainText: {
-    alignItems: 'flex-start',
-    height: '100%',
+  containerInputActive: {
+    backgroundColor: COLORS.MIRAGE,
   },
-  circleText: {
-    fontSize: 35,
-    color: COLORS.WHITE,
+  containerModal: {
+    paddingVertical: dw(20),
+    paddingHorizontal: dw(20),
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: COLORS.WHITE,
+    position: 'absolute',
+    width: '100%',
+    top: dh(626),
+    zIndex: 1,
+    elevation: 7,
+    borderTopWidth: dw(0.6),
+    borderColor: COLORS.MIRAGE,
+  },
+  containerModalStyle: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '80%',
+  },
+  containerStyleItem: {
+    width: dw(55),
+    height: dw(55),
+    borderRadius: dw(10),
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.29,
+    shadowRadius: 4.65,
+    elevation: 7,
+  },
+  onSubmit: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: dw(55),
+    height: dw(55),
+    borderRadius: dw(50),
+    backgroundColor: COLORS.DODGER_BLUE,
   },
   inputTitle: {
     fontSize: 30,
@@ -128,5 +207,8 @@ const styles = StyleSheet.create({
   },
   inputStyle: {
     fontSize: 24,
+  },
+  inputStyleActive: {
+    color: COLORS.WHITE,
   },
 });

@@ -24,7 +24,7 @@ export const Header: FC<HeaderProps> = props => {
   };
 
   const onPressItem = (value: string) => {
-    props.navigation.navigate(value, {value: {text: '', title: ''}});
+    props.navigation.navigate(value, {value: {text: '', title: ''}, isTheme});
   };
 
   return (
@@ -43,6 +43,7 @@ export const Header: FC<HeaderProps> = props => {
                 onPressMenu={onPressMenu}
                 onPress={onPressItem}
                 key={el.name}
+                isTheme={isTheme}
               />
             );
           })}
@@ -52,8 +53,12 @@ export const Header: FC<HeaderProps> = props => {
           <ModalContent
             data={props.modalData}
             textStyle={styles.textModal}
-            containerStyle={styles.modalContainer}
-            onPressContainer={onPressMenu}
+            containerStyle={[
+              styles.modalContainer,
+              isTheme && styles.modalContainerActive,
+            ]}
+            isData={true}
+            isTheme={isTheme}
             onPressItem={onPressItem}
           />
         </ModalContainer>
@@ -82,21 +87,8 @@ const styles = StyleSheet.create({
     top: dw(14),
     left: dw(250),
   },
-  textHeaderStyle: {
-    fontSize: 26,
-    fontWeight: '500',
-    color: COLORS.SCORPION,
-  },
-  textHeaderStyleActive: {
-    color: COLORS.WHITE,
-    fontSize: 28,
-    fontWeight: '500',
-  },
-  textModal: {
-    fontSize: 22,
-    color: COLORS.WHITE,
-    marginLeft: dw(20),
-    marginTop: dw(20),
+  modalContainerActive: {
+    backgroundColor: COLORS.WHITE,
   },
   modal: {
     width: dw(120),
@@ -104,5 +96,10 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.DODGER_BLUE,
     top: dw(14),
     left: dw(250),
+  },
+  textModal: {
+    fontSize: 22,
+    marginLeft: dw(20),
+    marginTop: dw(20),
   },
 });

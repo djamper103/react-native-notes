@@ -40,6 +40,7 @@ export const Home: FC<HomeProps> = props => {
     } else {
       props.navigation.navigate('New Note', {
         value: value ? value : {text: '', title: ''},
+        isTheme,
       });
     }
   };
@@ -120,6 +121,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: COLORS.MIRAGE,
+    backgroundColor: COLORS.WHITE,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 12,
+    },
+    shadowOpacity: 0.58,
+    shadowRadius: 16.0,
+    elevation: 24,
   },
 });

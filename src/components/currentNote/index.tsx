@@ -1,11 +1,13 @@
 import React, {FC} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text} from 'react-native';
+import {ScrollView} from 'react-native-gesture-handler';
 import {COLORS} from '../../constants/colors';
 import {dw} from '../../utils/dimensions';
 
 export const CurrentNote: FC = (props: any) => {
   return (
-    <View
+    <ScrollView
+      showsVerticalScrollIndicator={false}
       style={[styles.container, props.containerStyle && props.containerStyle]}>
       <Text
         style={[
@@ -29,7 +31,7 @@ export const CurrentNote: FC = (props: any) => {
         ]}>
         {props.route.params.data.text}
       </Text>
-    </View>
+    </ScrollView>
   );
 };
 

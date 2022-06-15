@@ -21,7 +21,7 @@ interface InputProps {
   secureTextEntry?: boolean;
   maxLength?: number;
   inputStyle?: any;
-  containerStyle?: ViewStyle;
+  containerStyle?: any;
   containerLeftIcon?: ViewStyle;
   containerRightIcon?: ViewStyle;
   leftIconStyle?: any;
