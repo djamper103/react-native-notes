@@ -1,9 +1,10 @@
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import React, {FC} from 'react';
+import React, {FC, useEffect} from 'react';
 import {StatusBar} from 'react-native';
 import {COLORS} from '../constants/colors';
-import {useAppSelector} from '../hooks/redux';
+import {useAppDispatch, useAppSelector} from '../hooks/redux';
+import {defaultFont} from '../redux/store/actionCreator/actionCreator';
 import {dw} from '../utils/dimensions';
 import {DrawerScreen} from './components';
 import {routesStack} from './routes';
@@ -12,6 +13,12 @@ export const NavigationContainerFC: FC = () => {
   const Stack = createStackNavigator();
 
   const {isTheme} = useAppSelector(reducer => reducer.themeReducer);
+
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(defaultFont());
+  }, [dispatch]);
 
   return (
     <NavigationContainer>

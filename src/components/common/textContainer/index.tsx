@@ -22,7 +22,12 @@ export const TextContainer: FC<TextContainerProps> = ({
   return (
     <View style={containerStyle && containerStyle}>
       {textHeader && (
-        <Text style={[styles.textHeader, textHeaderStyle && textHeaderStyle]}>
+        <Text
+          style={[
+            styles.textHeader,
+            textHeaderStyle && textHeaderStyle,
+            isTheme && styles.textActive,
+          ]}>
           {textHeader}
         </Text>
       )}
@@ -30,8 +35,8 @@ export const TextContainer: FC<TextContainerProps> = ({
         <Text
           style={[
             styles.textBottom,
-            isTheme && styles.textActive,
             textBottomStyle && textBottomStyle,
+            isTheme && styles.textActive,
           ]}>
           {textBottom}
         </Text>

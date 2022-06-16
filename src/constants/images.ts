@@ -9,6 +9,9 @@ import SEARCH from '../../assets/images/search/search.png';
 
 import DONE from '../../assets/images/done/done.png';
 
+import LIGHT_THEME from '../../assets/images/themes/light/light.png';
+import DARK_THEME from '../../assets/images/themes/dark/dark.png';
+
 export const DEFAULT_ICON = NO_PICTURE;
 
 export const MENU_ICON = MENU;
@@ -19,3 +22,6 @@ export const WRITTEN_NOTES_ICON = WRITTEN_NOTES;
 export const SEARCH_ICON = SEARCH;
 
 export const DONE_ICON = DONE;
+
+export const LIGHT_THEME_ICON = LIGHT_THEME;
+export const DARK_THEME_ICON = DARK_THEME;

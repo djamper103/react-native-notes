@@ -27,6 +27,7 @@ export const Home: FC<HomeProps> = props => {
 
   const {notesData} = useAppSelector(reducer => reducer.notesDataReducer);
   const {isTheme} = useAppSelector(reducer => reducer.themeReducer);
+  const {fontSize} = useAppSelector(reducer => reducer.fontReducer);
 
   const dispatch = useAppDispatch();
 
@@ -74,6 +75,7 @@ export const Home: FC<HomeProps> = props => {
         navigation={props.navigation}
         isTheme={isTheme}
         modalData={modalDataCurrenItem}
+        fontSize={fontSize}
         containerModalStyle={styles.containerModal}
         onPressModal={onPressModal}
       />
@@ -85,6 +87,7 @@ export const Home: FC<HomeProps> = props => {
         data={
           <TextContainer textHeaderStyle={styles.circleText} textHeader={'+'} />
         }
+        containerStyle={styles.containerCircleView}
         onPress={onPressModal}
       />
       <View>
@@ -130,5 +133,18 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.58,
     shadowRadius: 16.0,
     elevation: 24,
+  },
+  containerCircleView: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: dw(55),
+    height: dw(55),
+    borderRadius: dw(50),
+    backgroundColor: COLORS.DODGER_BLUE,
+    top: dw(540),
+    left: dw(280),
+    zIndex: 1,
+    elevation: 2,
+    position: 'absolute',
   },
 });

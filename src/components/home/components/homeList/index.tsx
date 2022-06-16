@@ -11,6 +11,7 @@ interface ListItemProps {
   navigation?: any;
   isTheme?: boolean;
   modalData?: any;
+  fontSize?: string;
   containerStyle?: ViewStyle;
   containerModalStyle?: ViewStyle;
   onPressModal: (type: string, dataItem: NotesListType) => void;
@@ -21,6 +22,7 @@ export const HomeListItem: FC<ListItemProps> = ({
   navigation,
   isTheme,
   modalData,
+  fontSize,
   containerStyle,
   containerModalStyle,
   onPressModal,
@@ -28,7 +30,17 @@ export const HomeListItem: FC<ListItemProps> = ({
   const [isModal, setIsModal] = useState(false);
 
   const onPressItem = () => {
-    navigation.navigate('Current Note', {data, isTheme});
+    navigation.navigate('Current Note', {
+      data,
+      isTheme,
+      fontSize,
+      func: () => {
+        navigation.navigate('New Note', {
+          value: data,
+          isTheme,
+        });
+      },
+    });
   };
   const onLongPressItem = () => {
     setIsModal(!isModal);
@@ -54,6 +66,8 @@ export const HomeListItem: FC<ListItemProps> = ({
           styles.textDate,
           styles.text,
           data.color !== 'white' && styles.textActive,
+          fontSize === 'Small' && styles.textDateSmall,
+          fontSize === 'Large' && styles.textDateLarge,
         ]}>
         {data.date && data.date?.split('.')[0]}
       </Text>
@@ -62,6 +76,8 @@ export const HomeListItem: FC<ListItemProps> = ({
           styles.textTitle,
           styles.text,
           data.color !== 'white' && styles.textActive,
+          fontSize === 'Small' && styles.textTitleSmall,
+          fontSize === 'Large' && styles.textTitleLarge,
         ]}>
         {data?.title}
       </Text>
@@ -70,6 +86,8 @@ export const HomeListItem: FC<ListItemProps> = ({
           styles.textMain,
           styles.text,
           data.color !== 'white' && styles.textActive,
+          fontSize === 'Small' && styles.textMainSmall,
+          fontSize === 'Large' && styles.textMainLarge,
         ]}
         numberOfLines={4}>
         {data?.text}
@@ -83,7 +101,11 @@ export const HomeListItem: FC<ListItemProps> = ({
             data={modalData}
             isModal={true}
             isData={true}
-            textStyle={styles.textModal}
+            textStyle={[
+              styles.textModal,
+              fontSize === 'Small' && styles.textModalSmall,
+              fontSize === 'Large' && styles.textModalLarge,
+            ]}
             containerStyle={containerModalStyle}
             onPressItem={onPressItemModal}
           />
@@ -95,12 +117,12 @@ export const HomeListItem: FC<ListItemProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    padding: dw(10),
+    padding: dw(15),
     backgroundColor: COLORS.WHITE,
     width: 190,
     marginBottom: dw(10),
     borderRadius: dw(10),
-    shadowColor: '#000',
+    shadowColor: COLORS.DUNE,
     shadowOffset: {
       width: 0,
       height: 2,
@@ -131,13 +153,38 @@ const styles = StyleSheet.create({
   textTitle: {
     fontSize: 24,
   },
+  textTitleSmall: {
+    fontSize: 20,
+  },
+  textTitleLarge: {
+    fontSize: 28,
+  },
   textMain: {
     fontSize: 20,
+  },
+  textMainSmall: {
+    fontSize: 16,
+  },
+  textMainLarge: {
+    fontSize: 24,
   },
   textDate: {
     fontSize: 18,
   },
+  textDateSmall: {
+    fontSize: 14,
+  },
+  textDateLarge: {
+    fontSize: 22,
+  },
   textModal: {
-    fontSize: 24,
+    color: COLORS.MIRAGE,
+    fontSize: 26,
+  },
+  textModalSmall: {
+    fontSize: 22,
+  },
+  textModalLarge: {
+    fontSize: 30,
   },
 });

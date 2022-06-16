@@ -3,7 +3,7 @@ import {Alert, StyleSheet, View} from 'react-native';
 import {COLORS} from '../../constants/colors';
 import {dh, dw} from '../../utils/dimensions';
 import {Input} from '../input';
-import {useAppDispatch} from '../../hooks/redux';
+import {useAppDispatch, useAppSelector} from '../../hooks/redux';
 import {
   addNote,
   deleteNote,
@@ -22,6 +22,8 @@ let schema = yup.object().shape({
 });
 
 export const WrittenPage: FC = (props: any) => {
+  const {fontSize} = useAppSelector(reducer => reducer.fontReducer);
+
   const isFocused = useIsFocused();
 
   const dispatch = useAppDispatch();
@@ -45,6 +47,7 @@ export const WrittenPage: FC = (props: any) => {
     if (!isFocused) {
       setInputTitle('');
       setInputText('');
+      setColor('');
     }
   }, [isFocused]);
 
@@ -87,6 +90,7 @@ export const WrittenPage: FC = (props: any) => {
           <ModalContent
             data={modalDataColor}
             isModal={false}
+            color={props.route.params.value.color}
             containerStyle={styles.containerModalStyle}
             containerStyleItem={styles.containerStyleItem}
             onPressItem={onPressItem}
@@ -114,6 +118,8 @@ export const WrittenPage: FC = (props: any) => {
           inputStyle={[
             styles.inputTitle,
             props.route.params.isTheme && styles.inputStyleActive,
+            fontSize === 'Small' && styles.inputTitleSmall,
+            fontSize === 'Large' && styles.inputTitleLarge,
           ]}
           placeholder={'Title'}
           maxLength={15}
@@ -132,6 +138,8 @@ export const WrittenPage: FC = (props: any) => {
           inputStyle={[
             styles.inputStyle,
             props.route.params.isTheme && styles.inputStyleActive,
+            fontSize === 'Small' && styles.inputStyleSmall,
+            fontSize === 'Large' && styles.inputStyleLarge,
           ]}
           maxLength={1000}
           placeholderTextColor={
@@ -176,7 +184,7 @@ const styles = StyleSheet.create({
     width: dw(55),
     height: dw(55),
     borderRadius: dw(10),
-    shadowColor: '#000',
+    shadowColor: COLORS.DUNE,
     shadowOffset: {
       width: 0,
       height: 3,
@@ -196,17 +204,23 @@ const styles = StyleSheet.create({
   inputTitle: {
     fontSize: 30,
   },
+  inputTitleSmall: {
+    fontSize: 26,
+  },
+  inputTitleLarge: {
+    fontSize: 34,
+  },
   image: {
     tintColor: COLORS.WHITE,
   },
-  text: {
-    color: COLORS.DUNE,
-    textAlign: 'center',
-    fontSize: 18,
-    marginVertical: dw(5),
-  },
   inputStyle: {
     fontSize: 24,
+  },
+  inputStyleSmall: {
+    fontSize: 20,
+  },
+  inputStyleLarge: {
+    fontSize: 28,
   },
   inputStyleActive: {
     color: COLORS.WHITE,

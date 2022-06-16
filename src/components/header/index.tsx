@@ -18,6 +18,7 @@ interface HeaderProps {
 export const Header: FC<HeaderProps> = props => {
   const [isModal, setIsModal] = useState(false);
   const {isTheme} = useAppSelector(reducer => reducer.themeReducer);
+  const {fontSize} = useAppSelector(reducer => reducer.fontReducer);
 
   const onPressMenu = () => {
     setIsModal(!isModal);
@@ -25,6 +26,7 @@ export const Header: FC<HeaderProps> = props => {
 
   const onPressItem = (value: string) => {
     props.navigation.navigate(value, {value: {text: '', title: ''}, isTheme});
+    onPressMenu();
   };
 
   return (
@@ -52,7 +54,11 @@ export const Header: FC<HeaderProps> = props => {
         <ModalContainer onPress={onPressMenu} isModal={isModal}>
           <ModalContent
             data={props.modalData}
-            textStyle={styles.textModal}
+            textStyle={[
+              styles.textModal,
+              fontSize === 'Small' && styles.textModalSmall,
+              fontSize === 'Large' && styles.textModalLarge,
+            ]}
             containerStyle={[
               styles.modalContainer,
               isTheme && styles.modalContainerActive,
@@ -101,5 +107,11 @@ const styles = StyleSheet.create({
     fontSize: 22,
     marginLeft: dw(20),
     marginTop: dw(20),
+  },
+  textModalSmall: {
+    fontSize: 18,
+  },
+  textModalLarge: {
+    fontSize: 26,
   },
 });
