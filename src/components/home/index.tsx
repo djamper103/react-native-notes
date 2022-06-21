@@ -3,17 +3,21 @@ import {FlatList, StyleSheet, View, ViewStyle} from 'react-native';
 import {COLORS} from '../../constants/colors';
 import {useAppDispatch, useAppSelector} from '../../hooks/redux';
 import {NotesListType} from '../../types/notes';
-import {dw} from '../../utils/dimensions';
-import {ViewContainer} from '../common/viewContainer';
-import {TextContainer} from '../common/textContainer';
+import {dh, dw} from '../../utils/dimensions';
 import {Search} from '../search';
 import {HomeListItem} from './components/homeList';
 import {
+  deleteHighlightedNotes,
   deleteNote,
+  setHighlightedNotes,
   setNote,
 } from '../../redux/store/actionCreator/actionCreator';
 import {ifJson} from '../functions/ifJson';
-import {modalDataCurrenItem} from '../../constants/data';
+import {modalDataAllItem, modalDataCurrenItem} from '../../constants/data';
+import {IconContainer} from '../common/iconContainer';
+import {PLUS_ICON} from '../../constants/images';
+import {ModalContent} from '../common/modalContent';
+import {useIsFocused} from '@react-navigation/native';
 
 interface HomeProps {
   navigation?: any;
@@ -28,6 +32,14 @@ export const Home: FC<HomeProps> = props => {
   const {notesData} = useAppSelector(reducer => reducer.notesDataReducer);
   const {isTheme} = useAppSelector(reducer => reducer.themeReducer);
   const {fontSize} = useAppSelector(reducer => reducer.fontReducer);
+  const {highlightedNotes} = useAppSelector(
+    reducer => reducer.highlightedSlice,
+  );
+
+  const [isModal, setIsModal] = useState(false);
+  const [modalItem, setModalItem] = useState<any>();
+
+  const isFocused = useIsFocused();
 
   const dispatch = useAppDispatch();
 
@@ -36,9 +48,23 @@ export const Home: FC<HomeProps> = props => {
   }, [dispatch]);
 
   const onPressModal = (type?: string, value?: any) => {
+    value && setModalItem(value);
     if (type === 'Delete') {
-      dispatch(deleteNote(value));
+      dispatch(setHighlightedNotes([]));
+      dispatch(deleteNote(modalItem));
+      setModalState();
+    } else if (type === 'Highlight') {
+      value && dispatch(setHighlightedNotes(value));
+    } else if (type === 'Delete All') {
+      setModalState();
+      dispatch(deleteHighlightedNotes(highlightedNotes));
+    } else if (type === 'Deselect All') {
+      setModalState();
+      dispatch(setHighlightedNotes([]));
+    } else if (type === 'Select All') {
+      dispatch(setHighlightedNotes(notesData));
     } else {
+      setModalItem(false);
       props.navigation.navigate('New Note', {
         value: value ? value : {text: '', title: ''},
         isTheme,
@@ -68,28 +94,40 @@ export const Home: FC<HomeProps> = props => {
     onSearch(textSearch);
   }, [notesData, onSearch, textSearch]);
 
+  const setModalState = (value?: boolean) => {
+    setIsModal(value ? value : !isModal);
+  };
+
+  useEffect(() => {
+    if (!isFocused) {
+      dispatch(setHighlightedNotes([]));
+      setIsModal(false);
+    }
+  }, [dispatch, isFocused]);
+
+  useEffect(() => {
+    highlightedNotes.length === 0 && setIsModal(false);
+  }, [highlightedNotes]);
+
   const renderItem: any = ({item}: {item: any}) => {
     return (
       <HomeListItem
         data={item}
         navigation={props.navigation}
         isTheme={isTheme}
-        modalData={modalDataCurrenItem}
+        modalData={
+          highlightedNotes.length > 1 ? modalDataAllItem : modalDataCurrenItem
+        }
         fontSize={fontSize}
-        containerModalStyle={styles.containerModal}
+        highlightedNotes={highlightedNotes}
         onPressModal={onPressModal}
+        setModalState={setModalState}
       />
     );
   };
+
   return (
-    <>
-      <ViewContainer
-        data={
-          <TextContainer textHeaderStyle={styles.circleText} textHeader={'+'} />
-        }
-        containerStyle={styles.containerCircleView}
-        onPress={onPressModal}
-      />
+    <View>
       <View>
         <FlatList<NotesListType>
           data={state.length > 0 ? state : notesData}
@@ -99,12 +137,49 @@ export const Home: FC<HomeProps> = props => {
           showsVerticalScrollIndicator={false}
           numColumns={2}
           refreshing={false}
-          onRefresh={uploadData}
-          ListHeaderComponent={<Search onSearch={onSearch} />}
+          style={isModal && styles.containerList}
+          // style={notesData.length >= 4 && isModal && styles.containerList}
           columnWrapperStyle={styles.container}
+          onRefresh={uploadData}
+          ListHeaderComponent={
+            <Search onSearch={onSearch} isFocused={isFocused} />
+          }
         />
       </View>
-    </>
+      {!isModal && (
+        <IconContainer
+          icon={PLUS_ICON}
+          imageStyle={styles.image}
+          containerStyle={styles.containerImage}
+          onPress={onPressModal}
+        />
+      )}
+      {isModal && (
+        <View
+          style={[
+            styles.containerModal,
+            highlightedNotes.length > 1 && styles.containerModalAll,
+          ]}>
+          <ModalContent
+            data={
+              highlightedNotes.length > 1
+                ? modalDataAllItem
+                : modalDataCurrenItem
+            }
+            isModal={isModal}
+            color={COLORS.WHITE}
+            containerStyle={styles.containerModalStyle}
+            onPressItem={onPressModal}
+            isData={true}
+            textStyle={[
+              styles.textModal,
+              highlightedNotes.length > 1 && styles.textModalLong,
+              fontSize === 'Small' && styles.textModalSmall,
+            ]}
+          />
+        </View>
+      )}
+    </View>
   );
 };
 
@@ -113,38 +188,57 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: dw(10),
   },
-  circleText: {
-    fontSize: 35,
-    color: COLORS.WHITE,
-  },
   containerModal: {
-    width: '100%',
-    paddingVertical: dw(20),
-    paddingHorizontal: dw(120),
+    paddingVertical: dw(25),
+    paddingHorizontal: dw(35),
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    position: 'absolute',
+    top: dh(580),
+    borderTopWidth: 0.6,
+    borderColor: COLORS.GHOST,
+    backgroundColor: COLORS.WHITE,
+  },
+  containerModalStyle: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: COLORS.WHITE,
-    shadowColor: '#000',
+    width: '100%',
+  },
+  containerModalAll: {
+    paddingHorizontal: dw(12),
+  },
+  containerList: {
+    marginBottom: dh(80),
+  },
+  containerImage: {
+    position: 'absolute',
+    top: dh(575),
+    left: dw(290),
+    backgroundColor: COLORS.DODGER_BLUE,
+    width: dw(60),
+    height: dw(60),
+    borderRadius: dw(60),
+    shadowColor: COLORS.MIRAGE,
     shadowOffset: {
       width: 0,
-      height: 12,
+      height: 6,
     },
     shadowOpacity: 0.58,
-    shadowRadius: 16.0,
-    elevation: 24,
+    shadowRadius: 5.0,
+    elevation: 10,
   },
-  containerCircleView: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: dw(55),
-    height: dw(55),
-    borderRadius: dw(50),
-    backgroundColor: COLORS.DODGER_BLUE,
-    top: dw(540),
-    left: dw(280),
-    zIndex: 1,
-    elevation: 2,
-    position: 'absolute',
+  image: {
+    tintColor: COLORS.WHITE,
+  },
+  textModal: {
+    color: COLORS.MIRAGE,
+    fontSize: 22,
+  },
+  textModalSmall: {
+    fontSize: 18,
+  },
+  textModalLong: {
+    fontSize: 20,
   },
 });

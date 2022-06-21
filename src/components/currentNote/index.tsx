@@ -26,7 +26,7 @@ export const CurrentNote: FC = (props: any) => {
       />
       <ScrollView
         showsVerticalScrollIndicator={false}
-        style={[
+        contentContainerStyle={[
           styles.container,
           props.containerStyle && props.containerStyle,
         ]}>
@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     elevation: 2,
     position: 'absolute',
     top: dh(-53),
-    left: dw(320),
+    left: dw(310),
   },
   textTitle: {
     fontSize: 34,

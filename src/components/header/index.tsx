@@ -2,7 +2,7 @@ import React, {FC, useState} from 'react';
 import {StyleSheet, View, ViewStyle} from 'react-native';
 import {COLORS} from '../../constants/colors';
 import {useAppSelector} from '../../hooks/redux';
-import {dw} from '../../utils/dimensions';
+import {dh, dw} from '../../utils/dimensions';
 import {ModalContainer} from '../common/modal';
 import {IconContent} from './components/iconContent';
 import {ModalContent} from '../common/modalContent';
@@ -26,11 +26,11 @@ export const Header: FC<HeaderProps> = props => {
 
   const onPressItem = (value: string) => {
     props.navigation.navigate(value, {value: {text: '', title: ''}, isTheme});
-    onPressMenu();
+    setIsModal(false);
   };
 
   return (
-    <>
+    <View>
       <View
         style={[
           styles.container,
@@ -69,7 +69,7 @@ export const Header: FC<HeaderProps> = props => {
           />
         </ModalContainer>
       )}
-    </>
+    </View>
   );
 };
 
@@ -87,26 +87,19 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.MIRAGE,
   },
   modalContainer: {
-    width: dw(120),
-    height: dw(150),
+    width: dw(130),
+    height: dh(160),
     backgroundColor: COLORS.DODGER_BLUE,
     top: dw(14),
-    left: dw(250),
+    left: dw(240),
   },
   modalContainerActive: {
     backgroundColor: COLORS.WHITE,
   },
-  modal: {
-    width: dw(120),
-    height: dw(150),
-    backgroundColor: COLORS.DODGER_BLUE,
-    top: dw(14),
-    left: dw(250),
-  },
   textModal: {
     fontSize: 22,
-    marginLeft: dw(20),
     marginTop: dw(20),
+    textAlign: 'center',
   },
   textModalSmall: {
     fontSize: 18,

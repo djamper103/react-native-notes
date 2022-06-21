@@ -4,12 +4,13 @@ import {NotesListType} from '../../../types/notes';
 import {NotesDataSlice} from '../reducers/notesDataSlice';
 import {FontSlice} from '../reducers/fontSlece';
 import {storageLocal} from '../../../constants/common';
+import {HighlightedNotesSlice} from '../reducers/highlightedNotes';
 
 export const setTheme = () => (dispatch: AppDispatch) => {
   dispatch(ThemeSlice.actions.setTheme());
 };
 
-export const setNote = (item: NotesListType) => (dispatch: AppDispatch) => {
+export const setNote = (item: any) => (dispatch: AppDispatch) => {
   dispatch(NotesDataSlice.actions.setNotesData(item));
 };
 
@@ -32,3 +33,13 @@ export const defaultFont = () => (dispatch: AppDispatch) => {
     dispatch(FontSlice.actions.setFont(json));
   }
 };
+
+export const setHighlightedNotes = (item?: any) => (dispatch: AppDispatch) => {
+  dispatch(HighlightedNotesSlice.actions.setHighlightedNotes(item));
+};
+
+export const deleteHighlightedNotes =
+  (item: NotesListType[]) => (dispatch: AppDispatch) => {
+    item.forEach(el => dispatch(deleteNote(el)));
+    dispatch(HighlightedNotesSlice.actions.setHighlightedNotes([]));
+  };

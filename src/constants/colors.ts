@@ -12,4 +12,5 @@ export const COLORS = {
   MIRAGE: '#171C26',
   MY_SIN: '#FEB52C',
   DODGER_BLUE: '#3269FF',
+  CARNATION: '#F44E6F',
 };

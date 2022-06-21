@@ -1,4 +1,4 @@
-import React, {FC, useState} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {StyleSheet} from 'react-native';
 import {COLORS} from '../../constants/colors';
 import {SEARCH_ICON} from '../../constants/images';
@@ -7,14 +7,19 @@ import {dw} from '../../utils/dimensions';
 import {Input} from '../input';
 
 interface SearchProps {
+  isFocused?: boolean;
   onSearch: (value: string) => void;
 }
 
-export const Search: FC<SearchProps> = ({onSearch}) => {
+export const Search: FC<SearchProps> = ({isFocused, onSearch}) => {
   const {isTheme} = useAppSelector(reducer => reducer.themeReducer);
   const {fontSize} = useAppSelector(reducer => reducer.fontReducer);
 
   const [text, onChangeText] = useState('');
+
+  useEffect(() => {
+    !isFocused && onChangeText('');
+  }, [isFocused]);
 
   const searchItem = () => {
     onSearch(text);
@@ -29,7 +34,6 @@ export const Search: FC<SearchProps> = ({onSearch}) => {
       isTheme={isTheme}
       containerStyle={styles.containerStyle}
       inputStyle={[
-        styles.inputStyle,
         fontSize === 'Medium' && styles.inputStyleMedium,
         fontSize === 'Large' && styles.inputStyleLarge,
       ]}
@@ -44,7 +48,6 @@ const styles = StyleSheet.create({
     margin: dw(20),
     borderRadius: dw(14),
     marginHorizontal: dw(10),
-    height: dw(50),
     shadowColor: COLORS.MIRAGE,
     shadowOffset: {
       width: 0,
@@ -53,9 +56,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.23,
     shadowRadius: 2.62,
     elevation: 4,
-  },
-  inputStyle: {
-    height: dw(50),
   },
   inputStyleMedium: {
     fontSize: 22,

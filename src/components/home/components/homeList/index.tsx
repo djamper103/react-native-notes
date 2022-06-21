@@ -1,10 +1,9 @@
-import React, {FC, useState} from 'react';
+import React, {FC} from 'react';
 import {Pressable, StyleSheet, Text, ViewStyle} from 'react-native';
 import {COLORS} from '../../../../constants/colors';
 import {NotesListType} from '../../../../types/notes';
 import {dw} from '../../../../utils/dimensions';
-import {ModalContainer} from '../../../common/modal';
-import {ModalContent} from '../../../common/modalContent';
+import {highlightedNoteFunc} from '../../../functions/highlightedNote';
 
 interface ListItemProps {
   data: NotesListType;
@@ -12,23 +11,22 @@ interface ListItemProps {
   isTheme?: boolean;
   modalData?: any;
   fontSize?: string;
+  highlightedNotes: NotesListType[];
   containerStyle?: ViewStyle;
-  containerModalStyle?: ViewStyle;
   onPressModal: (type: string, dataItem: NotesListType) => void;
+  setModalState: (value?: boolean) => void;
 }
 
 export const HomeListItem: FC<ListItemProps> = ({
   data,
   navigation,
   isTheme,
-  modalData,
   fontSize,
+  highlightedNotes,
   containerStyle,
-  containerModalStyle,
+  setModalState,
   onPressModal,
 }) => {
-  const [isModal, setIsModal] = useState(false);
-
   const onPressItem = () => {
     navigation.navigate('Current Note', {
       data,
@@ -43,11 +41,8 @@ export const HomeListItem: FC<ListItemProps> = ({
     });
   };
   const onLongPressItem = () => {
-    setIsModal(!isModal);
-  };
-
-  const onPressItemModal = (type: string) => {
-    onPressModal(type, data);
+    setModalState(true);
+    onPressModal('Highlight', data);
   };
 
   return (
@@ -58,59 +53,42 @@ export const HomeListItem: FC<ListItemProps> = ({
         data.color === 'blue' && styles.containerBlue,
         data.color === 'green' && styles.containerGreen,
         data.color === 'orange' && styles.containerOrange,
+        highlightedNoteFunc(highlightedNotes, data) && styles.containerActive,
       ]}
       onPress={onPressItem}
       onLongPress={onLongPressItem}>
       <Text
         style={[
-          styles.textDate,
           styles.text,
-          data.color !== 'white' && styles.textActive,
+          styles.textDate,
+          data.color !== 'white' && styles.textDateActive,
           fontSize === 'Small' && styles.textDateSmall,
           fontSize === 'Large' && styles.textDateLarge,
         ]}>
-        {data.date && data.date?.split('.')[0]}
+        {data.date?.split('.')[0]}
       </Text>
       <Text
         style={[
-          styles.textTitle,
           styles.text,
+          styles.textTitle,
           data.color !== 'white' && styles.textActive,
           fontSize === 'Small' && styles.textTitleSmall,
           fontSize === 'Large' && styles.textTitleLarge,
-        ]}>
+        ]}
+        numberOfLines={1}>
         {data?.title}
       </Text>
       <Text
         style={[
-          styles.textMain,
           styles.text,
+          styles.textMain,
           data.color !== 'white' && styles.textActive,
           fontSize === 'Small' && styles.textMainSmall,
           fontSize === 'Large' && styles.textMainLarge,
         ]}
-        numberOfLines={4}>
+        numberOfLines={3}>
         {data?.text}
       </Text>
-      {modalData && (
-        <ModalContainer
-          onPress={onLongPressItem}
-          isModal={isModal}
-          containerMainStyle={styles.containerModal}>
-          <ModalContent
-            data={modalData}
-            isModal={true}
-            isData={true}
-            textStyle={[
-              styles.textModal,
-              fontSize === 'Small' && styles.textModalSmall,
-              fontSize === 'Large' && styles.textModalLarge,
-            ]}
-            containerStyle={containerModalStyle}
-            onPressItem={onPressItemModal}
-          />
-        </ModalContainer>
-      )}
     </Pressable>
   );
 };
@@ -119,7 +97,7 @@ const styles = StyleSheet.create({
   container: {
     padding: dw(15),
     backgroundColor: COLORS.WHITE,
-    width: 190,
+    width: dw(176),
     marginBottom: dw(10),
     borderRadius: dw(10),
     shadowColor: COLORS.DUNE,
@@ -131,9 +109,6 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
-  containerModal: {
-    justifyContent: 'flex-end',
-  },
   containerBlue: {
     backgroundColor: COLORS.DODGER_BLUE,
   },
@@ -143,6 +118,11 @@ const styles = StyleSheet.create({
   containerOrange: {
     backgroundColor: COLORS.MY_SIN,
   },
+  containerActive: {
+    borderWidth: 2,
+    padding: dw(13),
+    borderColor: COLORS.CARNATION,
+  },
   text: {
     color: COLORS.DUNE,
     textAlign: 'left',
@@ -151,15 +131,16 @@ const styles = StyleSheet.create({
     color: COLORS.WHITE,
   },
   textTitle: {
-    fontSize: 24,
+    fontSize: 26,
   },
   textTitleSmall: {
-    fontSize: 20,
+    fontSize: 22,
   },
   textTitleLarge: {
-    fontSize: 28,
+    fontSize: 30,
   },
   textMain: {
+    color: '#404553',
     fontSize: 20,
   },
   textMainSmall: {
@@ -169,22 +150,16 @@ const styles = StyleSheet.create({
     fontSize: 24,
   },
   textDate: {
+    color: COLORS.GHOST,
     fontSize: 18,
+  },
+  textDateActive: {
+    color: COLORS.WHITE,
   },
   textDateSmall: {
     fontSize: 14,
   },
   textDateLarge: {
     fontSize: 22,
-  },
-  textModal: {
-    color: COLORS.MIRAGE,
-    fontSize: 26,
-  },
-  textModalSmall: {
-    fontSize: 22,
-  },
-  textModalLarge: {
-    fontSize: 30,
   },
 });

@@ -57,10 +57,10 @@ export const WrittenPage: FC = (props: any) => {
       .then(() => {
         dispatch(
           addNote({
-            title: inputTitle,
-            text: inputText,
+            title: inputTitle.replace(/(\r\n|\n|\r)/gm, ' ').trim(),
+            text: inputText.trim(),
             date: '',
-            color,
+            color: color,
           }),
         );
         props.route.params.value.date !== undefined &&
@@ -84,25 +84,7 @@ export const WrittenPage: FC = (props: any) => {
   };
 
   return (
-    <>
-      {modalDataColor && (
-        <View style={styles.containerModal}>
-          <ModalContent
-            data={modalDataColor}
-            isModal={false}
-            color={props.route.params.value.color}
-            containerStyle={styles.containerModalStyle}
-            containerStyleItem={styles.containerStyleItem}
-            onPressItem={onPressItem}
-          />
-          <IconContainer
-            icon={DONE_ICON}
-            imageStyle={styles.image}
-            containerStyle={styles.onSubmit}
-            onPress={onSubmit}
-          />
-        </View>
-      )}
+    <View>
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={[
@@ -148,7 +130,25 @@ export const WrittenPage: FC = (props: any) => {
           onChangeText={setInputText}
         />
       </ScrollView>
-    </>
+      {modalDataColor && (
+        <View style={styles.containerModal}>
+          <ModalContent
+            data={modalDataColor}
+            isModal={false}
+            color={props.route.params.value.color}
+            containerStyle={styles.containerModalStyle}
+            containerStyleItem={styles.containerStyleItem}
+            onPressItem={onPressItem}
+          />
+          <IconContainer
+            icon={DONE_ICON}
+            imageStyle={styles.image}
+            containerStyle={styles.onSubmit}
+            onPress={onSubmit}
+          />
+        </View>
+      )}
+    </View>
   );
 };
 
@@ -161,18 +161,16 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.MIRAGE,
   },
   containerModal: {
-    paddingVertical: dw(20),
+    paddingVertical: dh(20),
     paddingHorizontal: dw(20),
     flexDirection: 'row',
     justifyContent: 'space-between',
     backgroundColor: COLORS.WHITE,
     position: 'absolute',
     width: '100%',
-    top: dh(626),
-    zIndex: 1,
-    elevation: 7,
-    borderTopWidth: dw(0.6),
-    borderColor: COLORS.MIRAGE,
+    top: dh(560),
+    borderTopWidth: 0.6,
+    borderColor: COLORS.GHOST,
   },
   containerModalStyle: {
     flexDirection: 'row',

@@ -4,7 +4,7 @@ import {Pressable, View, ViewStyle} from 'react-native';
 interface ViewContainerProps {
   data?: any;
   containerStyle?: ViewStyle;
-  onPress: () => void;
+  onPress?: () => void;
 }
 
 export const ViewContainer: FC<ViewContainerProps> = ({
@@ -13,7 +13,7 @@ export const ViewContainer: FC<ViewContainerProps> = ({
   onPress,
 }) => {
   return (
-    <>
+    <View>
       {onPress ? (
         <Pressable onPress={onPress} style={containerStyle && containerStyle}>
           {data}
@@ -21,6 +21,6 @@ export const ViewContainer: FC<ViewContainerProps> = ({
       ) : (
         <View style={containerStyle && containerStyle}>{data}</View>
       )}
-    </>
+    </View>
   );
 };

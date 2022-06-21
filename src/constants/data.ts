@@ -2,7 +2,9 @@ import {MENU_ICON, NOTES_ACTIVE_ICON, WRITTEN_NOTES_ICON} from './images';
 
 export const modalDataHeaderMenu = ['Notes', 'Settings'];
 
-export const modalDataCurrenItem = ['Delete', 'Edit'];
+export const modalDataItem = ['Delete', 'Select All', 'Edit'];
+export const modalDataCurrenItem = ['Delete', 'Edit', 'Select All'];
+export const modalDataAllItem = ['Delete All', 'Select All', 'Deselect All'];
 
 export const modalDataColor = ['white', 'blue', 'green', 'orange'];
 

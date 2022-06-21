@@ -2,11 +2,13 @@ import {combineReducers, configureStore} from '@reduxjs/toolkit';
 import themeReducer from './reducers/themeSlice';
 import notesDataReducer from './reducers/notesDataSlice';
 import fontReducer from './reducers/fontSlece';
+import highlightedSlice from './reducers/highlightedNotes';
 
 const rootReducer = combineReducers({
   themeReducer,
   notesDataReducer,
   fontReducer,
+  highlightedSlice,
 });
 
 export const setupStore = () => {

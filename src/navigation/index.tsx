@@ -1,13 +1,16 @@
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import React, {FC, useEffect} from 'react';
-import {StatusBar} from 'react-native';
+import {Image, StatusBar, StyleSheet} from 'react-native';
+import {CurrentNote} from '../components/currentNote';
+import {Header} from '../components/header';
 import {COLORS} from '../constants/colors';
+import {iconDataMenu, modalDataHeaderMenu} from '../constants/data';
+import {ARROW_LEFT_ICON} from '../constants/images';
 import {useAppDispatch, useAppSelector} from '../hooks/redux';
 import {defaultFont} from '../redux/store/actionCreator/actionCreator';
 import {dw} from '../utils/dimensions';
-import {DrawerScreen} from './components';
-import {routesStack} from './routes';
+import {routes} from './routes';
 
 export const NavigationContainerFC: FC = () => {
   const Stack = createStackNavigator();
@@ -24,14 +27,7 @@ export const NavigationContainerFC: FC = () => {
     <NavigationContainer>
       <StatusBar backgroundColor={isTheme ? COLORS.MIRAGE : COLORS.WHITE} />
       <Stack.Navigator>
-        <Stack.Screen
-          name="Drawer"
-          component={DrawerScreen}
-          options={{
-            headerShown: false,
-          }}
-        />
-        {routesStack.map(el => (
+        {routes.map(el => (
           <Stack.Screen
             name={el.name}
             component={el.component}
@@ -44,14 +40,54 @@ export const NavigationContainerFC: FC = () => {
                 backgroundColor: isTheme ? COLORS.MIRAGE : COLORS.WHITE,
                 height: dw(60),
               },
-              headerTintColor: isTheme ? COLORS.WHITE : COLORS.MIRAGE,
               cardStyle: {
                 backgroundColor: isTheme ? COLORS.MIRAGE : COLORS.WHITE,
+              },
+              header: (props: any) => {
+                return (
+                  <Header
+                    {...props}
+                    iconData={iconDataMenu}
+                    modalData={modalDataHeaderMenu}
+                  />
+                );
               },
             }}
           />
         ))}
+        <Stack.Screen
+          name={'Current Note'}
+          component={CurrentNote}
+          key={'Current Note'}
+          options={{
+            headerTitleStyle: {
+              color: COLORS.TRANSPARENT,
+            },
+            headerStyle: {
+              backgroundColor: isTheme ? COLORS.MIRAGE : COLORS.WHITE,
+              height: dw(60),
+            },
+            cardStyle: {
+              backgroundColor: isTheme ? COLORS.MIRAGE : COLORS.WHITE,
+            },
+            headerBackImage: () => (
+              <Image
+                source={ARROW_LEFT_ICON}
+                style={[styles.image, isTheme && styles.imageActive]}
+              />
+            ),
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
 };
+
+const styles = StyleSheet.create({
+  image: {
+    resizeMode: 'contain',
+  },
+  imageActive: {
+    tintColor: COLORS.WHITE,
+  },
+});

@@ -12,6 +12,10 @@ import DONE from '../../assets/images/done/done.png';
 import LIGHT_THEME from '../../assets/images/themes/light/light.png';
 import DARK_THEME from '../../assets/images/themes/dark/dark.png';
 
+import ARROW_LEFT from '../../assets/images/arrow/left/left.png';
+
+import PLUS from '../../assets/images/plus/plus.png';
+
 export const DEFAULT_ICON = NO_PICTURE;
 
 export const MENU_ICON = MENU;
@@ -25,3 +29,7 @@ export const DONE_ICON = DONE;
 
 export const LIGHT_THEME_ICON = LIGHT_THEME;
 export const DARK_THEME_ICON = DARK_THEME;
+
+export const ARROW_LEFT_ICON = ARROW_LEFT;
+
+export const PLUS_ICON = PLUS;
